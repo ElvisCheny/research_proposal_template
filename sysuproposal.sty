@@ -1,0 +1,193 @@
+\ProvidesPackage{sysuproposal}
+
+%=================== 1. 页面与基础设置 ===================
+\RequirePackage[a4paper,left=3.17cm,right=2.54cm,top=2.54cm,bottom=2.54cm]{geometry} 
+\RequirePackage[zihao=-4]{ctex} 
+\RequirePackage{fontspec}
+\RequirePackage{titlesec}
+\RequirePackage{titletoc}
+\RequirePackage{fancyhdr}
+\RequirePackage{setspace}
+\RequirePackage{array}          % 提供表格列格式控制
+\RequirePackage{graphicx}
+\RequirePackage{booktabs}
+\RequirePackage[hidelinks]{hyperref}
+\RequirePackage{xeCJKfntef}     % 【关键】引入中文特效包，支持换行下划线
+
+% 行距设置
+\linespread{1.4}
+
+%=================== 2. 字体详细设置 ===================
+\setmainfont{Times New Roman}
+
+% --- 黑体 ---
+\setCJKsansfont{simhei}[
+    Path = font/,
+    Extension = .ttf, 
+    BoldFont = *,
+    AutoFakeBold = 3
+]
+\setCJKfamilyfont{zhhei}{simhei}[Path=font/, Extension=.ttf, AutoFakeBold=3]
+\newcommand{\myheiti}{\CJKfamily{zhhei}} 
+
+% --- 隶书 ---
+\setCJKfamilyfont{zhli}{SIMLI}[
+    Path = font/,
+    Extension = .TTF, 
+    BoldFont = *, 
+    AutoFakeBold = 2
+]
+\newcommand{\mylishu}{\CJKfamily{zhli}}
+
+% --- 楷体 ---
+\setCJKfamilyfont{zhkai}{kaiti}[
+    Path = font/,
+    Extension = .TTF, 
+    BoldFont = *, 
+    AutoFakeBold = 4
+]
+\newcommand{\mykaiti}{\CJKfamily{zhkai}}
+
+% --- 正文宋体 ---
+\setCJKmainfont[AutoFakeBold=true]{FandolSong-Regular}
+
+%=================== 3. 页眉页脚 ===================
+\pagestyle{fancy}
+\fancyhf{} 
+\fancyfoot[C]{\songti\zihao{5}\thepage} 
+\renewcommand{\headrulewidth}{0pt} 
+
+%=================== 4. 标题序号设置 ===================
+\renewcommand{\thesection}{\chinese{section}}
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
+
+%=================== 5. 目录格式 ===================
+\let\oldtableofcontents\tableofcontents
+\renewcommand{\tableofcontents}{
+    \newgeometry{top=2.54cm, bottom=2.54cm} 
+    \pagestyle{empty}     
+    \oldtableofcontents   
+    \thispagestyle{empty} 
+    \cleardoublepage      
+    \restoregeometry      
+    \pagestyle{fancy}     
+}
+
+\renewcommand{\contentsname}{\centerline{\zihao{-2}\myheiti 目\quad 录}}
+
+\titlecontents{section}[0pt]{\songti\zihao{4}}{\thecontentslabel、}{}{\titlerule*[0.3pc]{.}\contentspage}
+\titlecontents{subsection}[2em]{\songti\zihao{4}}{\thecontentslabel\ }{}{\titlerule*[0.3pc]{.}\contentspage}
+\titlecontents{subsubsection}[4em]{\songti\zihao{4}}{\thecontentslabel\ }{}{\titlerule*[0.3pc]{.}\contentspage}
+
+%=================== 6. 正文标题格式 ===================
+\titleformat{\section}
+    {\raggedright\bfseries\myheiti\zihao{-2}\addCJKfontfeatures{FakeBold=3}} 
+    {\thesection、}
+    {0em}
+    {}
+    []
+\titlespacing{\section}{0pt}{18pt}{12pt}
+
+\titleformat{name=\section,numberless}
+    {\raggedright\bfseries\myheiti\zihao{-2}\addCJKfontfeatures{FakeBold=3}} 
+    {} 
+    {0em}
+    {}
+    []
+\titlespacing{name=\section,numberless}{0pt}{18pt}{12pt}
+
+\titleformat{\subsection}
+    {\raggedright\bfseries\myheiti\zihao{-3}\addCJKfontfeatures{FakeBold=3}}
+    {\thesubsection}
+    {0.5em}
+    {}
+    []
+\titlespacing{\subsection}{0pt}{12pt}{6pt}
+
+\titleformat{\subsubsection}
+    {\raggedright\bfseries\myheiti\zihao{4}\addCJKfontfeatures{FakeBold=3}}
+    {\thesubsubsection}
+    {0.5em}
+    {}
+    []
+\titlespacing{\subsubsection}{0pt}{6pt}{0pt}
+
+%=================== 7. 参考文献设置 ===================
+\RequirePackage[sort&compress]{gbt7714}
+\bibliographystyle{gbt7714-numerical} 
+
+\let\oldbibliography\bibliography
+\renewcommand{\bibliography}[1]{
+    \phantomsection
+    \addcontentsline{toc}{section}{\refname} 
+    \oldbibliography{#1}
+}
+
+%=================== 8. 封面设计 ===================
+\newcommand{\makecover}{
+    \begin{titlepage}
+        \newgeometry{top=2cm, bottom=2.5cm, left=3cm, right=3cm}
+        \centering
+        
+        \vspace*{0.5cm}
+        {\zihao{1}\mykaiti\addCJKfontfeatures{FakeBold=5} 中\ 山\ 大\ 学}
+        
+        \vspace{1.2cm}
+        
+        {\zihao{3}\songti \textbf{攻读 \underline{\@degreelevel} 学位研究生}} \\
+        \vspace{0.8cm}
+        {\zihao{2}\songti \textbf{\CJKunderline[thickness=2pt, skip=false]{\@degreelevel} 学位论文开题报告}}
+        
+        \vspace{2.5cm}
+        
+        % 【修复】题目换行问题
+        % 使用 tabular 结构，强行限制宽度为 11cm
+        % 使用 \CJKunderline 替代 ulem，提供更好的中文断行支持
+        % \begin{tabular}{r >{\centering\arraybackslash}p{11cm}}
+        %     {\zihao{2}\songti\bfseries 题目：} & 
+        %     {\zihao{2}\songti\bfseries
+        %      \CJKunderline[thickness=1pt, skip=false]{\@title}}
+        % \end{tabular}
+        \begin{tabular}{r >{\centering\arraybackslash}p{11cm}}
+            {\zihao{2}\songti 题目：} & 
+            {\zihao{2}\songti
+             \CJKunderline[thickness=1pt, skip=false]{\@title}}
+        \end{tabular}
+        
+        \vspace{2.5cm}
+        
+        {\zihao{4}\songti
+            \renewcommand{\arraystretch}{1.4}
+            \begin{tabular}{r c}
+                \makebox[4em][s]{姓 名}： & \underline{\makebox[7.5cm][c]{\@author}} \\
+                \makebox[4em][s]{学 号}： & \underline{\makebox[7.5cm][c]{\@stuid}} \\
+                \makebox[4em][s]{院 系}： & \underline{\makebox[7.5cm][c]{\@dept}} \\
+                \makebox[4em][s]{专 业}： & \underline{\makebox[7.5cm][c]{\@major}} \\
+                研究方向： & \underline{\makebox[7.5cm][c]{\@research}} \\
+                指导教师： & \underline{\makebox[7.5cm][c]{\@mentor}} \\
+            \end{tabular}
+        }
+        
+        \vfill
+        
+        \newlength{\widthofcollege}
+        \settowidth{\widthofcollege}{\zihao{4}\mylishu\textbf{中山大学遥感科学与技术学院}}
+        
+        {\zihao{4}\mylishu\textbf{中山大学遥感科学与技术学院}} \\
+        \vspace{0.8cm} 
+        {\zihao{4}\mylishu\textbf{\makebox[\widthofcollege][s]{\@date}}}
+        
+        \vspace{1.5cm} 
+        
+        \restoregeometry
+    \end{titlepage}
+}
+
+\newcommand{\stuid}[1]{\def\@stuid{#1}}
+\newcommand{\dept}[1]{\def\@dept{#1}}
+\newcommand{\major}[1]{\def\@major{#1}}
+\newcommand{\research}[1]{\def\@research{#1}}
+\newcommand{\mentor}[1]{\def\@mentor{#1}}
+\newcommand{\degreelevel}[1]{\def\@degreelevel{#1}}
+\degreelevel{博士}

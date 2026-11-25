@@ -1,0 +1,41 @@
+\documentclass[a4paper]{article}
+
+% 引入刚才定义的样式文件
+\usepackage{sysuproposal}
+
+%=================== 填写封面信息 ===================
+\degreelevel{博士}          % 学位层次：博士或硕士
+\title{XXXXXXXXXXX}       % 论文题目
+\author{XXX}                     % 姓名
+\stuid{XXXXXXX}                  % 学号
+\dept{遥感科学与技术学院}          % 院系
+\major{XXXX}       % 专业
+\research{XXXXXX}            % 研究方向
+\mentor{XX \ 教授}              % 指导教师
+\date{2026 年 11 月 28 日}        % 日期
+
+%=================== 正文开始 ===================
+\begin{document}
+
+% 1. 生成封面
+\makecover
+
+% 2. 生成目录（自动另起一页，页码使用罗马数字，但根据您的需求页码统一在底部）
+\newpage
+\pagenumbering{Roman} % 目录页若需要罗马数字页码
+\tableofcontents
+\newpage
+
+% 3. 报告正文（页码重置为阿拉伯数字 1）
+\pagenumbering{arabic} 
+\setcounter{page}{1}
+
+\input{sec/01_background_significance.tex}
+\input{sec/02_research_content.tex}
+\input{sec/03_research_scheme.tex}
+\input{sec/04_research_basis_plan.tex}
+\input{sec/05_innovation_expected_results.tex}
+
+\bibliography{ref}
+
+\end{document}
